@@ -1,9 +1,24 @@
 import Image from "next/image";
 import styles from "./singleBlog.module.css";
+import PostUser from "@/components/postUser/PostUser";
+import { Suspense } from "react";
 
-const SingleBlogPage = ({ params }) => {
+const getData = async (slug) => {
 
-  console.log(params)
+  const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${slug}`);
+
+  if (!res.ok) {
+    throw new Error("Something went wrong here!");
+  }
+
+  return res.json();
+};
+
+const SingleBlogPage = async ({ params }) => {
+
+  const { slug } = params;
+
+  const post = await getData(slug)
   return <div className={styles.container}>
 
     <div className={styles.imgContainer}>
@@ -16,7 +31,7 @@ const SingleBlogPage = ({ params }) => {
     </div>
 
     <div className={styles.textContainer}>
-      <h1 className={styles.title}>Some Title for the Post ...</h1>
+      <h1 className={styles.title}>{post.title}</h1>
 
       <div className={styles.detail}>
       <Image 
@@ -26,11 +41,10 @@ const SingleBlogPage = ({ params }) => {
         height={50}
         className={styles.userAvatar}
       />
-
-      <div className={styles.detailText}>
-        <span className={styles.detailTitle}>Author</span>
-        <span className={styles.detailValue}>Arsalan Shah</span>
-      </div>
+      <Suspense fallback={<div>Loading ...</div>}>
+        <PostUser userId={post.userId}/>
+      </Suspense>
+      
 
       <div className={styles.detailText}>
         <span className={styles.detailTitle}>Published</span>
@@ -39,7 +53,7 @@ const SingleBlogPage = ({ params }) => {
       </div>
 
       <div className={styles.content}>
-        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Eius, fugit nulla perspiciatis voluptate veniam recusandae corrupti possimus molestiae! Perspiciatis, earum maiores! Debitis temporibus repudiandae nulla fuga corrupti cum ipsa numquam ...
+        {post.body}
       </div>
     </div>
 
