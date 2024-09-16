@@ -53,6 +53,7 @@ const Links = () => {
         width={30}
         height={30}
         onClick={() => setOpen((prev) => !prev)}
+        className={styles.menuButton}
       />
       {open && (
         <div className={styles.mobileLinks}>
