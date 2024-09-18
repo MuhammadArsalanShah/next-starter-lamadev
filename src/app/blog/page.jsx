@@ -3,23 +3,23 @@ import styles from "./blog.module.css";
 import { getPosts } from "@/lib/data";
 
 // FETCh DATA WITH AN API
-// const getData = async () => {
-//   const res = await fetch("https://jsonplaceholder.typicode.com/posts", {cache: "no-store"});
+const getData = async () => {
+  const res = await fetch("http://localhost:3000/api/blog", {cache: "no-store"});
 
-//   if (!res.ok) {
-//     throw new Error("Something went wrong here!");
-//   }
+  if (!res.ok) {
+    throw new Error("Something went wrong here!");
+  }
 
-//   return res.json();
-// };
+  return res.json();
+};
 
 const BlogPage = async () => {
 
   // FETCh DATA WITH AN API
-  // const posts = await getData();
+  const posts = await getData();
 
   // FETCh DATA WITHOUT AN API
-  const posts = await getPosts();
+  // const posts = await getPosts();
 
   return (
     <div className={styles.container}>
