@@ -17,7 +17,6 @@ import { getPost } from "@/lib/data";
 // };
 
 const SingleBlogPage = async ({ params }) => {
-
   const { slug } = params;
   // FETCh DATA WITH AN API
   // const post = await getData(slug);
@@ -25,45 +24,34 @@ const SingleBlogPage = async ({ params }) => {
   // FETCh DATA WITHOUT AN API
   const post = await getPost(slug);
 
-  return <div className={styles.container}>
+  return (
+    <div className={styles.container}>
+      {post.img && (
+        <div className={styles.imgContainer}>
+          <Image src={post.img} alt="" fill className={styles.img} />
+        </div>
+      )}
 
-    <div className={styles.imgContainer}>
-      <Image 
-        src="https://images.pexels.com/photos/11703911/pexels-photo-11703911.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-        alt=""
-        fill
-        className={styles.img}
-      />
-    </div>
+      <div className={styles.textContainer}>
+        <h1 className={styles.title}>{post.title}</h1>
 
-    <div className={styles.textContainer}>
-      <h1 className={styles.title}>{post.title}</h1>
+        <div className={styles.detail}>
+          <Suspense fallback={<div>Loading ...</div>}>
+            <PostUser userId={post.userId} />
+          </Suspense>
 
-      <div className={styles.detail}>
-      <Image 
-        src="https://images.pexels.com/photos/12634535/pexels-photo-12634535.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-        alt=""
-        width={50}
-        height={50}
-        className={styles.userAvatar}
-      />
-      <Suspense fallback={<div>Loading ...</div>}>
-        <PostUser userId={post.userId}/>
-      </Suspense>
-      
+          <div className={styles.detailText}>
+            <span className={styles.detailTitle}>Published</span>
+            <span className={styles.detailValue}>
+              {post.createdAt.toString().slice(4, 16)}
+            </span>
+          </div>
+        </div>
 
-      <div className={styles.detailText}>
-        <span className={styles.detailTitle}>Published</span>
-        <span className={styles.detailValue}>13.09.2024</span>
-      </div>
-      </div>
-
-      <div className={styles.content}>
-        {post.body}
+        <div className={styles.content}>{post.desc}</div>
       </div>
     </div>
-
-  </div>;
+  );
 };
 
 export default SingleBlogPage;
