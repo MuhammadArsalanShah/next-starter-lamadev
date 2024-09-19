@@ -4,17 +4,16 @@ import { revalidatePath } from "next/cache";
 import { Post, User } from "./models";
 import { connectToDb } from "./utils";
 import { signIn, signOut } from "./auth";
-import bcrypt from 'bcrypt';
+import bcrypt from "bcrypt";
 
-export const addPost= async (formdata) => {
-
+export const addPost = async (formdata) => {
   // const title = formdata.get("title");
   // const desc = formdata.get('desc');
   // const slug = formdata.get('slug');
 
   // destructure it like this
 
-  const {title, desc, slug, userId} = Object.fromEntries(formdata);
+  const { title, desc, slug, userId } = Object.fromEntries(formdata);
 
   try {
     connectToDb();
@@ -26,41 +25,42 @@ export const addPost= async (formdata) => {
     });
 
     await newPost.save();
-    console.log('Saved to DB');
+    console.log("Saved to DB");
     revalidatePath("/blog");
   } catch (error) {
-    return { error: "Something went wrong!"}
+    return { error: "Something went wrong!" };
   }
-}
+};
 
-export const deletePost= async (formdata) => {
-
+export const deletePost = async (formdata) => {
   const { id } = Object.fromEntries(formdata);
 
   try {
     connectToDb();
     await Post.findByIdAndDelete(id);
-    console.log('Deleted from DB');
+    console.log("Deleted from DB");
     revalidatePath("/blog");
   } catch (error) {
-    return { error: "Something went wrong!"}
+    return { error: "Something went wrong!" };
   }
-}
+};
 
 export const handleGithubLogin = async () => {
   await signIn("github");
-}
+};
 
-export const handleLogout= async () => {
+export const handleLogout = async () => {
   await signOut();
-}
+};
 
 export const register = async (formData) => {
-  const { username, email, password, passwordRepeat, img } = Object.fromEntries(formData);
+  const { username, email, password, passwordRepeat, img } =
+    Object.fromEntries(formData);
 
-  if (password !== passwordRepeat ) {
-    console.log("Password don't match")
-    return "Password do not match!";
+  if (password !== passwordRepeat) {
+    // console.log("Password don't match");
+    // return "Password do not match!";
+    throw new Error("Password do not match!");
   }
 
   try {
@@ -79,13 +79,24 @@ export const register = async (formData) => {
       username,
       email,
       password: hashedPassword,
-      img
+      img,
     });
 
     await newUser.save();
     console.log("New user saved to DB via Register");
   } catch (error) {
     console.log(error);
-    return { error: "Something went wrong!" }
+    return { error: "Something went wrong!" };
   }
-}
+};
+
+export const handleCredentialsLogin = async (formData) => {
+  const { username, password } = Object.fromEntries(formData);
+
+  try {
+    await signIn("credentials", { username, password });
+  } catch (error) {
+    console.log(error);
+    return { error: "Something went wrong!" };
+  }
+};
