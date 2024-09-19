@@ -3,7 +3,12 @@ import GitHub from "next-auth/providers/github";
 import { connectToDb } from "./utils";
 import { User } from "./models";
 
-export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
+export const {
+  handlers: { GET, POST },
+  auth,
+  signIn,
+  signOut,
+} = NextAuth({
   providers: [
     GitHub({
       clientId: process.env.GITHUB_ID,
@@ -11,31 +16,28 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async signIn({user, account, profile}) {
-      console.log(profile);
-
+    async signIn({ user, account, profile }) {
       if (account.provider === "github") {
         connectToDb();
         try {
-          const user = await User.findOne({email: profile.email});
+          const user = await User.findOne({ email: profile.email });
 
           if (!user) {
             const newUser = new User({
               username: profile.login,
               email: profile.email,
-              image: profile.avatar_url, 
+              image: profile.avatar_url,
             });
 
             await newUser.save();
+            console.log("Created new user");
           }
-
         } catch (error) {
           console.log(error);
           return false;
         }
       }
-
       return true;
     },
-  }
+  },
 });
