@@ -58,7 +58,7 @@ export const register = async (previousState, formData) => {
     Object.fromEntries(formData);
 
   if (password !== passwordRepeat) {
-    return {error: "Password do not match!"};
+    return { error: "Password do not match!" };
   }
 
   try {
@@ -82,7 +82,6 @@ export const register = async (previousState, formData) => {
 
     await newUser.save();
     return { success: true };
-
   } catch (error) {
     console.log(error);
     return { error: "Something went wrong!" };
@@ -95,9 +94,8 @@ export const handleCredentialsLogin = async (prevState, formData) => {
   try {
     await signIn("credentials", { username, password });
   } catch (error) {
-
     if (error.message.includes("CredentialsSignin")) {
-      return {error: "Invalid username or password!"}
+      return { error: "Invalid username or password!" };
     }
 
     throw error;

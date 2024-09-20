@@ -1,19 +1,11 @@
-"use client"
+"use client";
 
 import { handleCredentialsLogin, handleGithubLogin } from "@/lib/action";
 import styles from "./loginForm.module.css";
-import { useFormState } from 'react-dom';
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useFormState } from "react-dom";
 
 const LoginForm = () => {
-
   const [state, formAction] = useFormState(handleCredentialsLogin, undefined);
-  // const router = useRouter();
-
-  // useEffect(() => {
-  //   state?.success && router.push("/");
-  // }, [state?.success, router])
 
   return (
     <>
@@ -21,9 +13,11 @@ const LoginForm = () => {
         <input type="text" placeholder="username" name="username" />
         <input type="password" placeholder="password" name="password" />
         <button>Login with Credentials</button>
-      </form>
 
-      {state?.error}
+        {state?.error && (
+          <span className={styles.error_log}>{state?.error}</span>
+        )}
+      </form>
 
       <div className={styles.separator}>
         <label>Or</label>

@@ -7,7 +7,9 @@ const LoginPage = () => {
     <div className={styles.container}>
       <div className={styles.wrapper}>
         <LoginForm />
-        <Link href="/register" className={styles.link}>Don&apos;t have an account? <b>Signup</b></Link>
+        <Link href="/register" className={styles.link}>
+          Don&apos;t have an account? <b>Signup</b>
+        </Link>
       </div>
     </div>
   );
