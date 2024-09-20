@@ -6,7 +6,8 @@ import { connectToDb } from "./utils";
 import { signIn, signOut } from "./auth";
 import bcrypt from "bcrypt";
 
-export const addPost = async (formdata) => {
+/*************  Add & Delete Posts *************/
+export const addPost = async (prevState, formdata) => {
   // const title = formdata.get("title");
   // const desc = formdata.get('desc');
   // const slug = formdata.get('slug');
@@ -25,8 +26,10 @@ export const addPost = async (formdata) => {
     });
 
     await newPost.save();
-    console.log("Saved to DB");
+    console.log("New post Saved to DB");
     revalidatePath("/blog");
+    revalidatePath("/admin");
+
   } catch (error) {
     return { error: "Something went wrong!" };
   }
@@ -38,19 +41,67 @@ export const deletePost = async (formdata) => {
   try {
     connectToDb();
     await Post.findByIdAndDelete(id);
-    console.log("Deleted from DB");
+    console.log("Post Deleted from DB");
     revalidatePath("/blog");
+    revalidatePath("/admin");
+
   } catch (error) {
     return { error: "Something went wrong!" };
   }
 };
 
+/************* Add & Delete Users *************/
+export const addUser = async (prevState, formdata) => {
+
+  const { username, email, password, img } = Object.fromEntries(formdata);
+
+  try {
+    connectToDb();
+    const newUser = new User({ username, email, password, img });
+
+    await newUser.save();
+    console.log("New User Saved in DB");
+    revalidatePath("/admin");
+
+  } catch (error) {
+    return { error: "Something went wrong!" };
+  }
+};
+
+export const deleteUser = async (formdata) => {
+  const { id } = Object.fromEntries(formdata);
+
+  try {
+    connectToDb();
+
+    await Post.deleteMany({userId:id});
+    await User.findByIdAndDelete(id);
+    console.log("User Deleted from DB");
+    revalidatePath("/admin");
+
+  } catch (error) {
+    return { error: "Something went wrong!" };
+  }
+};
+
+/************* Other handle functions *************/
+
 export const handleGithubLogin = async () => {
   await signIn("github");
 };
 
-export const handleLogout = async () => {
-  await signOut();
+export const handleCredentialsLogin = async (prevState, formData) => {
+  const { username, password } = Object.fromEntries(formData);
+
+  try {
+    await signIn("credentials", { username, password });
+  } catch (error) {
+    if (error.message.includes("CredentialsSignin")) {
+      return { error: "Invalid username or password!" };
+    }
+
+    throw error;
+  }
 };
 
 export const register = async (previousState, formData) => {
@@ -88,16 +139,6 @@ export const register = async (previousState, formData) => {
   }
 };
 
-export const handleCredentialsLogin = async (prevState, formData) => {
-  const { username, password } = Object.fromEntries(formData);
-
-  try {
-    await signIn("credentials", { username, password });
-  } catch (error) {
-    if (error.message.includes("CredentialsSignin")) {
-      return { error: "Invalid username or password!" };
-    }
-
-    throw error;
-  }
+export const handleLogout = async () => {
+  await signOut();
 };
