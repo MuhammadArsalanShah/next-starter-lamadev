@@ -26,7 +26,6 @@ const login = async (credentials) => {
     return user;
 
   } catch (error) {
-    console.log(error);
     throw new Error('Failed to login');
   }
 }
@@ -45,7 +44,6 @@ export const { handlers: { GET, POST }, auth, signIn, signOut } = NextAuth({
           const user = await login(credentials);
           return user;
         } catch (error) {
-          console.log(error);
           return null;
         }
       }
