@@ -54,7 +54,11 @@ export const deletePost = async (formdata) => {
 /************* Add & Delete Users *************/
 export const addUser = async (prevState, formdata) => {
 
-  const { username, email, password, img } = Object.fromEntries(formdata);
+  const { username, email, password, passwordRepeat, img } = Object.fromEntries(formdata);
+  
+  if (password !== passwordRepeat) {
+    return { error: "Password do not match!" };
+  }
 
   try {
     connectToDb();
