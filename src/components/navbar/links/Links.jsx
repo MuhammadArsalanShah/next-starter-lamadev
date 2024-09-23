@@ -5,7 +5,7 @@ import styles from "./links.module.css";
 import NavLink from "./navLinks/NavLink";
 
 import Image from "next/image";
-import { handleLogout } from "@/lib/action";
+import DropDown from "./dropdown/DropDown";
 
 const links = [
   {
@@ -36,12 +36,7 @@ const Links = ({ session }) => {
           <NavLink item={link} key={link.title} />
         ))}
         {session?.user ? (
-          <>
-            {session.user?.isAdmin && <NavLink item={{ title: "Admin", path: "/admin" }} />}
-            <form action={handleLogout}>
-              <button className={styles.logout}>Logout</button>
-            </form>
-          </>
+          <DropDown session={session} />
         ) : (
           <NavLink item={{ title: "Login", path: "/login" }} />
         )}
