@@ -1,4 +1,4 @@
-import styles from './adminUser.module.css';
+import styles from './adminUsers.module.css';
 
 const AdminUsers = () => {
   return (
