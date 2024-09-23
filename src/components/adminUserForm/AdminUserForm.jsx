@@ -15,7 +15,7 @@ const AdminUserForm = () => {
       <input type="password" name="passwordRepeat" placeholder="Confirm Password" />
       <input type="text" name="img" placeholder="User image" />
       <select name="isAdmin">
-        <option value="false" disabled>Is Admin?</option>
+        <option value="false" disabled selected>Is Admin?</option>
         <option value="false">No</option>
         <option value="true">Yes</option>
       </select>
