@@ -14,7 +14,7 @@ export const addPost = async (prevState, formdata) => {
 
   // destructure it like this
 
-  const { title, desc, slug, img,  userId } = Object.fromEntries(formdata);
+  const { title, desc, slug, img, userId } = Object.fromEntries(formdata);
 
   try {
     connectToDb();
@@ -30,7 +30,6 @@ export const addPost = async (prevState, formdata) => {
     console.log("New post Saved to DB");
     revalidatePath("/blog");
     revalidatePath("/admin");
-
   } catch (error) {
     return { error: "Something went wrong!" };
   }
@@ -45,7 +44,6 @@ export const deletePost = async (formdata) => {
     console.log("Post Deleted from DB");
     revalidatePath("/blog");
     revalidatePath("/admin");
-
   } catch (error) {
     return { error: "Something went wrong!" };
   }
@@ -53,21 +51,30 @@ export const deletePost = async (formdata) => {
 
 /************* Add & Delete Users *************/
 export const addUser = async (prevState, formdata) => {
+  const { username, email, password, passwordRepeat, img, isAdmin } =
+    Object.fromEntries(formdata);
 
-  const { username, email, password, passwordRepeat, img } = Object.fromEntries(formdata);
-  
   if (password !== passwordRepeat) {
     return { error: "Password do not match!" };
   }
 
   try {
     connectToDb();
-    const newUser = new User({ username, email, password, img });
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const newUser = new User({
+      username,
+      email,
+      password: hashedPassword,
+      img,
+      isAdmin,
+    });
 
     await newUser.save();
     console.log("New User Saved in DB");
     revalidatePath("/admin");
-
   } catch (error) {
     return { error: "Something went wrong!" };
   }
@@ -79,7 +86,7 @@ export const deleteUser = async (formdata) => {
   try {
     connectToDb();
 
-    await Post.deleteMany({userId:id});
+    await Post.deleteMany({ userId: id });
     await User.findByIdAndDelete(id);
     console.log("User Deleted from DB");
     revalidatePath("/admin");
